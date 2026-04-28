@@ -98,7 +98,8 @@ jobs:
         run: |
           az group create \
             --name devsecops-rg \
-            --location centralindia
+            --location centralindia \
+            --output none
 
       - name: Deploy to Azure Container Instance
         run: |
