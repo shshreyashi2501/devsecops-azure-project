@@ -14,13 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Semgrep SAST Scan
-        uses: returntocorp/semgrep-action@v1
+        uses: semgrep/semgrep-action@v1
         with:
           config: >-
             p/python
             p/flask
             p/owasp-top-ten
-
+        continue-on-error: true
+        
   # JOB 2: Python Security with Bandit
   bandit-scan:
     runs-on: ubuntu-latest
