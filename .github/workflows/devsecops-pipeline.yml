@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 permissions:
- contents:read
- packages:write
+  contents:read
+  packages:write
 
 jobs:
 
@@ -133,7 +133,7 @@ jobs:
             --registry-login-server ghcr.io \
             --registry-username ${{ github.actor }} \
             --registry-password ${{ secrets.GITHUB_TOKEN }}
-            
+
       - name: Security Pipeline Summary
         run: |
           echo '## 🔒 DevSecOps Security Report' >> $GITHUB_STEP_SUMMARY
