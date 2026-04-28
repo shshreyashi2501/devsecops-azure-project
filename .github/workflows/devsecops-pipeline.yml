@@ -21,7 +21,7 @@ jobs:
             p/flask
             p/owasp-top-ten
         continue-on-error: true
-        
+
   # JOB 2: Python Security with Bandit
   bandit-scan:
     runs-on: ubuntu-latest
@@ -98,7 +98,7 @@ jobs:
         run: |
           az group create \
             --name devsecops-rg \
-            --location eastus
+            --location centralindia
 
       - name: Deploy to Azure Container Instance
         run: |
