@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+ contents:read
+ packages:write
+
 jobs:
 
   # JOB 1: SAST with Semgrep
@@ -101,19 +105,35 @@ jobs:
             --location centralindia \
             --output none
 
+      - name: Login to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and Push Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/devsecops-app:latest .
+          docker push ghcr.io/${{ github.repository }}/devsecops-app:latest
+
       - name: Deploy to Azure Container Instance
         run: |
+          az container delete \
+            --resource-group devsecops-rg \
+            --name devsecops-app \
+            --yes || true
           az container create \
             --resource-group devsecops-rg \
             --name devsecops-app \
-            --image python:3.11-slim \
+            --image ghcr.io/${{ github.repository }}/devsecops-app:latest \
             --os-type Linux \
             --cpu 1 \
             --memory 1.5 \
             --ports 5000 \
             --ip-address public \
-            --command-line "python -c \"from flask import Flask; app=Flask(__name__); app.run(host='0.0.0.0',port=5000)\""
-
+            --location centralindia \
+            --registry-login-server ghcr.io \
+            --registry-username ${{ github.actor }} \
+            --registry-password ${{ secrets.GITHUB_TOKEN }}
+            
       - name: Security Pipeline Summary
         run: |
           echo '## 🔒 DevSecOps Security Report' >> $GITHUB_STEP_SUMMARY
